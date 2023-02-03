@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <!-- 개발용 -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- 배포용 -->
+  <!-- <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script> -->
+  <!-- babel 소스코드 -->
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+
+  <script type="text/babel">
+    //react는 크게 class방식과 함수방식이 있고, 대부분 function(함수)를 사용한다.
+    //여전히 class문법을 사용하는 회사도 있으므로, class를 사용하는 방법도 알아야한다. 
+    'use strict';
+
+    // class 방식
+    class LikeButton extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { liked: false };
+      }
+
+      render() {
+        if (this.state.liked) {
+          return 'You liked this.'
+        }
+
+        // return React.creatElement('button', {
+        //   onClick: () => this.setState({
+        //     liked: true
+        //   })
+        // }, 'Like');
+        return (
+          <button onClick={() => this.setState({ liked: true })}>
+            Like
+          </button>
+        );
+      }
+    }
+
+    //함수 컴포넌트
+    // function LikeButton() {
+    //   const [liked, setLiked] = React.useState(false); //구조분해
+    //   if (liked) {
+    //     return 'You liked this.';
+    //   }
+    //   return (
+    //     <button onClick={() => {
+    //       setLiked(true);
+    //     }}>Like</button>
+    //   )
+    // }
+  </script>
+  <script type="text/babel">
+    // 만든 component(LikeButton)를 root안에 그려라! 라는 의미
+    //ReactDOM.render(<LikeButton />, document.querySelector('#root')); //react 17버전 코드
+    ReactDOM.createRoot(document.querySelector('#root')).render(
+      <LikeButton />
+    ); //react 18버전 코드
+  </script>
+</body>
+
+</html>
