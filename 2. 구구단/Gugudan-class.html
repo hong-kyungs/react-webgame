@@ -30,6 +30,7 @@
       onSubmit = (e) => {
         e.preventDefault();
         if (parseInt(this.state.value) === this.state.first * this.state.second) {
+          //setState안에 this.state.value값이 들어가면, 객체자체 보다는 함수를 넣고 return할 것.
           this.setState((prevState) => {
             return {
               result: `${prevState.value} 정답`,
@@ -38,11 +39,14 @@
               value: '',
             }
           });
+          this.input.focus();
         } else {
           this.setState({
             result: '땡',
             value: '',
           });
+          this.input.focus();
+
         }
       }
 
@@ -50,13 +54,16 @@
         this.setState({ value: e.target.value })
       };
 
+      onRefInput = (c) => { this.input = c; };
+
       render() {
         return (
           //나중에 바벨을 설치하면 <React.Fragment> 대신<>빈태그를 넣어줘도된다.
+          //input에 focus를 넣고싶을때, ref={함수}를 사용.
           <React.Fragment>
             <div>{this.state.first} 곱하기 {this.state.second} 는?</div>
             <form onSubmit={this.onSubmit}>
-              <input type="number" value={this.state.value} onChange={this.onChange} />
+              <input ref={this.onRefInput} type="number" value={this.state.value} onChange={this.onChange} />
               <button>입력!</button>
             </form>
             <div>{this.state.result}</div>
