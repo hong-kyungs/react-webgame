@@ -1,8 +1,9 @@
 const path = require('path');
+const { webpack } = require('webpack');
 
 module.exports = {
 	name: 'wordrelay-setting',
-	mode: 'development',
+	mode: 'development', //개발용, 실서비스 : production
 	devtool: 'eval',
 	resolve: {
 		extensions: ['.js', '.jsx'],
