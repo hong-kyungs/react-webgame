@@ -32,7 +32,7 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [new webpack.LoaderOptionsPlugin({ debug: true })],
+	// plugins: [new webpack.LoaderOptionsPlugin({ debug: true })],
 	output: {
 		path: path.join(__dirname, 'dist'),
 		filename: 'app.js',
