@@ -1,4 +1,4 @@
-import React, { Component }from 'react';
+import React, { Component, createRef }from 'react';
 // import { Component } from 'react'; // 위처럼 합쳐줄 수 있다.
 import Try from './try';
 
@@ -29,15 +29,18 @@ onSubmitForm = (e) => {
       return{
         result: '홈런!',
         tries: [...prevState.tries, {try: value, result: '홈런!'}],
+        value:'',
+        tries: [],
       }
     });
-    alert('게임을 다시 시작합니다.');
-    this.setState({ // 게임을 다시 시작해야 하기 떄문에 초기화
-      value:'',
-      answer: getNumbers(),
-      tries: [],
-    });
-    this.inputRef.focus();
+    setTimeout(() => {
+      alert('게임을 다시 시작합니다.');
+      this.setState({ // 게임을 다시 시작해야 하기 떄문에 초기화
+        result: '',
+        answer: getNumbers(),
+      });
+    })
+    this.inputRef.current.focus();
   } else { // 정답이 아니면
     const answerArray = value.split('').map((v) => parseInt(v));
     let strike = 0;
@@ -45,14 +48,17 @@ onSubmitForm = (e) => {
     if (tries.length >= 9) { // 10번이상 틀렸을 떄
       this.setState({
         result: `10번 넘게 틀려서 실패! 답은 ${answer.join(',')}였습니다.`,
-      });
-      alert('게임을 다시 시작합니다.');
-      this.setState({ // 게임을 다시 시작해야 하기 떄문에 초기화
         value:'',
-        answer: getNumbers(),
         tries: [],
       });
-      this.inputRef.focus();
+      setTimeout(() => {
+        alert('게임을 다시 시작합니다.');
+        this.setState({ // 게임을 다시 시작해야 하기 떄문에 초기화
+          result: '',
+          answer: getNumbers(),
+        });
+      })
+      this.inputRef.current.focus();
     } else {
       for (let i = 0; i < 4; i += 1) {
         if (answerArray[i] === answer[i]) {
@@ -67,7 +73,7 @@ onSubmitForm = (e) => {
           value: '',
         }
       })
-      this.inputRef.focus();
+      this.inputRef.current.focus();
     }
   }
 } 
@@ -79,10 +85,7 @@ onChangeInput = (e) => {
   })
 }
 
-inputRef;
-
-onInputRef = (c) => { this.inputRef = c; }
-
+inputRef = createRef();
 
 render () {
   const { result, value, tries } = this.state;
@@ -90,7 +93,7 @@ render () {
     <>
       <h1>{result}</h1>
       <form onSubmit={this.onSubmitForm}>
-        <input ref={this.onInputRef} maxLength={4} value={value} onChange={this.onChangeInput}/>
+        <input ref={this.inputRef} maxLength={4} value={value} onChange={this.onChangeInput}/>
       </form>
       <div>시도: {tries.length}</div>
       <ul>

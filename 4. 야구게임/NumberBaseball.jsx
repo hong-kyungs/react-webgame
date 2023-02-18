@@ -21,26 +21,33 @@ const NumberBaseball = () => {
   const onSubmitForm = (e) => {
     e.preventDefault();
     if (value === answer.join('')) {
-      setResult('홈런!!');
+      setResult(`${value} 홈런!!`);
       setTries((prevTries) => {
         return [...prevTries, {try: value, result: '홈런!'}]
       })
-      alert('게임을 다시 시작합니다.');
       setValue('')
-      setAnswer(getNumbers());
       setTries([]);
-      inputEl.current.focus();
+      setTimeout(() => {
+        alert('게임을 다시 시작합니다.');
+        setResult('');
+        setAnswer(getNumbers());
+        inputEl.current.focus();
+      })
     } else { // 정답이 아니면
       const answerArray = value.split('').map((v) => parseInt(v));
       let strike = 0;
       let ball = 0;
       if (tries.length >= 9) { // 10번이상 틀렸을 떄
-        setResult(`10번 넘게 틀려서 실패! 답은 ${answer.join(',')}였습니다.`)
-        alert('게임을 다시 시작합니다.');
+        setResult(`10번 넘게 틀려서 실패! 답은 ${answer.join(',')}였습니다.
+        `)
         setValue('')
-        setAnswer(getNumbers());
         setTries([]);
-        inputEl.current.focus();
+        setTimeout(() => {
+          alert('게임을 다시 시작합니다.');
+          setResult('');
+          setAnswer(getNumbers());
+          inputEl.current.focus();
+        })
       } else {
         for (let i = 0; i < 4; i += 1) {
           if (answerArray[i] === answer[i]) {
