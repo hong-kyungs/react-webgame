@@ -4,7 +4,7 @@ const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 module.exports = {
 	name: 'wordrelay-setting',
 	mode: 'development', //개발용, 실서비스 : production
-	devtool: 'eval',
+	devtool: 'eval', // 실서비스: hidden-source-map
 	resolve: {
 		extensions: ['.js', '.jsx'],
 	},
