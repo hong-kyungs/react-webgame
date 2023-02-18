@@ -37,6 +37,7 @@ onSubmitForm = (e) => {
       answer: getNumbers(),
       tries: [],
     });
+    this.inputRef.focus();
   } else { // 정답이 아니면
     const answerArray = value.split('').map((v) => parseInt(v));
     let strike = 0;
@@ -51,6 +52,7 @@ onSubmitForm = (e) => {
         answer: getNumbers(),
         tries: [],
       });
+      this.inputRef.focus();
     } else {
       for (let i = 0; i < 4; i += 1) {
         if (answerArray[i] === answer[i]) {
@@ -61,10 +63,11 @@ onSubmitForm = (e) => {
       }
       this.setState((prevState) => {
         return {
-          tries: [...prevState.tries, { try: value, result: `${strike} 스트라이크, ${ball} 볼 입니다.`}],
+          tries: [...prevState.tries, { try: value, result: `${strike} 스트라이크, ${ball} 볼 입니다~~`}],
           value: '',
         }
       })
+      this.inputRef.focus();
     }
   }
 } 
@@ -76,6 +79,10 @@ onChangeInput = (e) => {
   })
 }
 
+inputRef;
+
+onInputRef = (c) => { this.inputRef = c; }
+
 
 render () {
   const { result, value, tries } = this.state;
@@ -83,7 +90,7 @@ render () {
     <>
       <h1>{result}</h1>
       <form onSubmit={this.onSubmitForm}>
-        <input maxLength={4} value={value} onChange={this.onChangeInput}/>
+        <input ref={this.onInputRef} maxLength={4} value={value} onChange={this.onChangeInput}/>
       </form>
       <div>시도: {tries.length}</div>
       <ul>

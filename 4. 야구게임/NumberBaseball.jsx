@@ -1,4 +1,4 @@
-import React, { useState }from 'react';
+import React, { useState, useRef }from 'react';
 import Try from './try';
 
 function getNumbers () { // 숫자 4개를 겹치지 않고 랜덤하게 뽑는 함수
@@ -16,6 +16,7 @@ const NumberBaseball = () => {
   const [ value, setValue ] = useState('');
   const [ answer, setAnswer ] = useState(getNumbers); // lazy unit, 늦은 초기화
   const [ tries, setTries ] = useState([]);
+  const inputEl = useRef(null);
 
   const onSubmitForm = (e) => {
     e.preventDefault();
@@ -28,6 +29,7 @@ const NumberBaseball = () => {
       setValue('')
       setAnswer(getNumbers());
       setTries([]);
+      inputEl.current.focus();
     } else { // 정답이 아니면
       const answerArray = value.split('').map((v) => parseInt(v));
       let strike = 0;
@@ -38,6 +40,7 @@ const NumberBaseball = () => {
         setValue('')
         setAnswer(getNumbers());
         setTries([]);
+        inputEl.current.focus();
       } else {
         for (let i = 0; i < 4; i += 1) {
           if (answerArray[i] === answer[i]) {
@@ -48,6 +51,7 @@ const NumberBaseball = () => {
         }
         setTries((prevTries) => [...prevTries, { try: value, result: `${strike} 스트라이크, ${ball} 볼 입니다.`}]);
         setValue('');
+        inputEl.current.focus();
       }
     }
   } 
@@ -61,7 +65,7 @@ const NumberBaseball = () => {
     <>
       <h1>{result}</h1>
       <form onSubmit={onSubmitForm}>
-        <input maxLength={4} value={value} onChange={onChangeInput}/>
+        <input ref={inputEl} maxLength={4} value={value} onChange={onChangeInput}/>
       </form>
       <div>시도: {tries.length}</div>
       <ul>
