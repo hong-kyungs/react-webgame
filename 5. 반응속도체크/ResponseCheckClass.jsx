@@ -43,11 +43,21 @@ class ResponseCheck extends Component {
     }
   }
 
+  onReset = () => {
+    this.setState({
+      result: [],
+    });
+  }
+
   renderAverage = () => {
     const { result } = this.state;
     return result.length === 0
     ? null
-    : <div>평균 시간: { result.reduce((a, c) => a + c) / result.length }ms</div>
+    : 
+    <>
+      <div>평균 시간: { result.reduce((a, c) => a + c) / result.length }ms</div>
+      <button onClick={this.onReset}>취소</button>
+    </>
   }
 
   render() {
