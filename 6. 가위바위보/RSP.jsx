@@ -14,8 +14,15 @@ const rspCoords = {
 const score = {
   가위: 1,
   바위: 0,
-   보: -1,
+  보: -1,
 }
+
+const computerChoice = (imgCoord) => {
+  return Object.entries(rspCoords).find(function (v) {
+    return v[1] === imgCoord;
+  })[0];
+};
+;
 
 class RSP extends Component {
   state = {
@@ -27,7 +34,18 @@ class RSP extends Component {
   interval;
 
   componentDidMount() { // 컴포넌트가 첫 렌더링된 후, 여기에 비동기 요청 많이 한다
-    this.interval = setInterval(() => {
+    this.interval = setInterval(this.changHand, 50)
+  }
+
+  componentDidUpdate() { // 리렌더링 후 
+
+  }
+
+  componentWillUnmount() { // 컴포넌트가 제거되기 직전, 비동기 요청 정리를 많이 한다
+    clearInterval(this.interval);
+  }
+
+  changHand = () => {
       // 비동기함수는 바깥의 변수를 참조하면 클로저가 발생한다.
       const { imgCoord } = this.state; // 비동기함수는 변수를 절대 밖에 선언하지 말것. 
       if(imgCoord === rspCoords.바위) {
@@ -43,19 +61,36 @@ class RSP extends Component {
           imgCoord: rspCoords.바위
         });
       }
-    }, 1000)
   }
 
-  componentDidUpdate() { // 리렌더링 후 
-
-  }
-
-  componentWillUnmount() { // 컴포넌트가 제거되기 직전, 비동기 요청 정리를 많이 한다
+  onClickBtn = (choice) => () => {
+    const { imgCoord } = this.state;
     clearInterval(this.interval);
-  }
-
-  onClickBtn = () => {
-
+    const myScore = score[choice];
+    const cpuScore = score[computerChoice(imgCoord)];
+    const diff = myScore - cpuScore;
+    if(diff === 0 ) {
+      this.setState({
+        result: "비겼습니다.",
+      });
+    } else if([-1, 2].includes(diff)) {
+      this.setState((prevState) => {
+        return {
+          result: "이겼습니다.",
+          score: prevState.score + 1,
+        }
+      });
+    } else {
+      this.setState((prevState) => {
+        return {
+          result: "졌습니다.",
+          score: prevState.score - 1,
+        }
+      });
+    }
+    setTimeout(() => {
+      this.interval = setInterval(this.changHand, 50)
+    }, 1000) // 1초동안 결과확인하는 시간
   }
 
   render() {
@@ -64,9 +99,9 @@ class RSP extends Component {
       <>
         <div id="computer" style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0` }}></div>
         <div>
-          <button id="rock" className='btn' onClick={() => this.onClickBtn('바위')}>바위</button>
-          <button id="scissor" className='btn' onClick={() => this.onClickBtn('가위')}>가위</button>
-          <button id="paper" className='btn' onClick={() => this.onClickBtn('보')}>보</button>
+          <button id="rock" className='btn' onClick={this.onClickBtn('바위')}>바위</button>
+          <button id="scissor" className='btn' onClick={this.onClickBtn('가위')}>가위</button>
+          <button id="paper" className='btn' onClick={this.onClickBtn('보')}>보</button>
         </div>
         <div>{result}</div>
         <div>현재 {score}점</div>
