@@ -12,7 +12,10 @@ const Ball = memo (({ number }) =>{
     background = 'blue';
   } else {
     background = 'green';
-  } 
+  }
+  return(
+    <div className='ball' style={{background}} >{number}</div>
+  )
 })
 
 export default Ball;
