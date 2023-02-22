@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect }from 'react';
+import useInterval from './useInterval';
 
 const rspCoords = {
   바위: '0',
@@ -23,31 +24,23 @@ const RSP = () =>{
   const [result, setResult] = useState('');
   const [imgCoord, setImgCoord ] = useState(rspCoords.바위);
   const [score , setScore ] = useState(0);
-  const interval = useRef();
+  const [ isRunning, setIsRunning ] = useState(true);
 
-  //useEffect(첫번째인수-함수()=>{}, 두번째인수-배열)
-  //두번째 인수로 넣은 imgCoord가 바뀔 때마다 첫번째 인수인 함수부분이 렌더링된다.
-  useEffect(() => { //componentDidMount, componentDidUpdate 역할(1대1 대응 아님)
-    interval.current = setInterval(changHand, 50);
-    return () => { //componentWillUnmount 역할
-      clearInterval(interval.current);
-    } 
-  }, [imgCoord])
-  
   const changHand = () => {
-      if(imgCoord === rspCoords.바위) {
-        setImgCoord(rspCoords.가위)
-      } else if (imgCoord === rspCoords.가위) {
-        setImgCoord(rspCoords.보 )
-      } else if (imgCoord === rspCoords.보) {
-        setImgCoord(rspCoords.바위)
-      }
+    if(imgCoord === rspCoords.바위) {
+      setImgCoord(rspCoords.가위)
+    } else if (imgCoord === rspCoords.가위) {
+      setImgCoord(rspCoords.보 )
+    } else if (imgCoord === rspCoords.보) {
+      setImgCoord(rspCoords.바위)
+    }
   }
-
+  
+  useInterval(changHand, isRunning ? 100 : null);
+  
   const onClickBtn = (choice) => () => {
-    if(interval.current) {
-      clearInterval(interval.current);
-      interval.current = null;
+    if(isRunning) {
+      setIsRunning(false);
       const myScore = scores[choice];
       const cpuScore = scores[computerChoice(imgCoord)];
       const diff = myScore - cpuScore;
@@ -61,7 +54,7 @@ const RSP = () =>{
         setScore((prevScore) => prevScore - 1);
       }
       setTimeout(() => {
-        interval.current = setInterval(changHand, 50)
+        setIsRunning(true);
       }, 1000) // 1초동안 결과확인하는 시간
     }
   }
