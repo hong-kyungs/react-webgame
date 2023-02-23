@@ -11,24 +11,24 @@ function getWinNumbers () {
   const winNumbers = shuffle.splice(0, 6). sort((p, c) => p - c);
   const bonusNumber = shuffle[6];
   return[...winNumbers, bonusNumber]
-
 }
 
 class Lotto extends Component {
   state = {
-    winNumbers: getWinNumbers(),
+    winNumbers: getWinNumbers(), //당첨 숫자들
     winBalls: [],
-    bonus: null,
+    bonus: null, //보너스 공
     redo: false,
   }
 
-  timeout = [];
+  timeouts = [];
 
-  componentDidMount() {
+  runTimeout = () =>{
+    console.log('runTimeout');
     const { winNumbers } = this.state;
     console.log(winNumbers);
     for(let i = 0; i < winNumbers.length - 1; i++) {
-      this.timeout[i] = setTimeout(() => {
+      this.timeouts[i] = setTimeout(() => {
         this.setState((prevState) => {
           return{
             winBalls: [...prevState.winBalls, winNumbers[i]]
@@ -36,12 +36,25 @@ class Lotto extends Component {
         })
       }, (i + 1) * 1000);
     }
-    this.timeout[6] = setTimeout(() => {
+    this.timeouts[6] = setTimeout(() => {
       this.setState({
         bonus: winNumbers[6],
         redo: true,
       })
     }, 7000)
+  }
+
+  componentDidMount() {
+    console.log('DidMount');
+    this.runTimeout();
+  }
+
+  componentDidUpdate() { //업데이트 하고 싶은 상황을 조건문으로 잘 감싸줘야 한다.
+    console.log('DidUpdate');
+    if(this.state.winBalls.length === 0) { 
+      //(this.state.bonus === null) or (this.state.redo === false)를 조건문으로 넣어줘도 된다.
+      this.runTimeout();
+    }
   }
 
   componentWillUnmount() {
@@ -50,7 +63,16 @@ class Lotto extends Component {
     })
   }
 
-// onClickRedo = () => {};
+onClickRedo = () => {
+  console.log('onClickRedo');
+  this.setState({
+    winNumbers: getWinNumbers(),
+    winBalls: [],
+    bonus: null,
+    redo: false,
+  });
+  this.timeouts = [];
+};
 
   render() {
     const { winBalls, bonus, redo } = this.state;
@@ -62,7 +84,7 @@ class Lotto extends Component {
         </div>
         <div>보너스!</div>
         {bonus && <Ball number = {bonus}/>}
-        {/* <button onClick={redo ? onClickRedo : () => {}}>한번 더!</button> */}
+        {redo && <button onClick={this.onClickRedo}>한번 더!</button>}
       </>
     )
   }
