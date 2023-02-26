@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Td = () => {
+const Td = ({ rowData }) => {
   return(
     <td>{''}</td>
   )
