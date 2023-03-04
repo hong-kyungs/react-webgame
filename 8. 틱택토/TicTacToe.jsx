@@ -107,6 +107,7 @@ const reducer = (state, action) =>{ //action을 dispatch할때마다 reducer부�
           })
           if(all){
             dispatch({ type: RESET_GAME});
+            dispatch({ type: SET_WINNER, winner: ''})
           } else {
             dispatch({ type: CHANGE_TURN }); // 승리검사 후 이긴게 아니면 다음차례(CHANGE_TURN)로 넘겨준다
           }
