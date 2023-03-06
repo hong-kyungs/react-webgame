@@ -1,5 +1,17 @@
 import React, { useReducer, createContext, useMemo } from 'react';
 import Table from './Table';
+import Form from './Form';
+
+export const CODE = {
+  MINE: -7,
+  NORMAL: -1,
+  QUESTION: -2,
+  FLAG: -3,
+  QUESTION_MINE: -4,
+  FLAG_MINE: -5,
+  CLICKED_MINE: -6,
+  OPENED: 0,
+}
 
 export const TableContext = createContext({
   //초기값을 넣어줘야 하는데 초기값이 별 의미가 없으므로, 배열, 함수로 모양한 맞춰줌
@@ -13,9 +25,15 @@ const initialState = {
   result: '',
 };
 
+const START_GAME = 'START_GAME';
+
 const reducer = (state, action) => {
   switch(action.type){
-
+    case START_GAME:
+      return {
+        ...state,
+        tableData: plantMine(action.row, action.cell, action.mine), //plantMine이라는 함수를 만들어서 지뢰를 심어 테이블 그리기
+      }
     default: 
       return state;
   }

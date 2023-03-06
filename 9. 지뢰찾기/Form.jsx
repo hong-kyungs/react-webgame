@@ -18,8 +18,8 @@ const Form = () =>{
   }, []);
   
   const onClickBtn = useCallback(() => {
-
-  }, []);
+    dispatch({ type: START_GAME, row, cell, mine}); //input에 입력한 값을 action에 전해준다.
+  }, [row, cell, mine]);
 
   return(
     <div>
