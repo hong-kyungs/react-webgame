@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext }from 'react';
-import { TableContext } from './MineSearch';
+import { START_GAME, TableContext } from './MineSearch';
 
 const Form = () =>{
   const [row, setRow] = useState(10);
