@@ -75,6 +75,27 @@ const reducer = (state, action) => {
       const tableData = [...state.tableData];
       tableData[action.row] = [...state.tableData[action.row]];
       tableData[action.row][action.cell] = CODE.OPENED;
+      let around = [];
+      if(tableData[action.row - 1]){//클릭한 칸에 윗줄이 있으면 아래처럼 세칸을 넣어준다
+        around = around.concat(
+          tableData[action.row - 1][action.cell - 1],
+          tableData[action.row - 1][action.cell],
+          tableData[action.row - 1][action.cell + 1],
+        );
+      }
+      around = around.concat( //클릭한 칸의 오른쪽, 왼쪽칸(옆칸들)
+        tableData[action.row][action.cell - 1],
+        tableData[action.row][action.cell + 1],
+      );
+      if(tableData[action.row + 1]){//클릭한 칸에 아랫줄이 있으면 아래처럼 세칸을 넣어준다
+        around = around.concat(
+          tableData[action.row + 1][action.cell - 1],
+          tableData[action.row + 1][action.cell],
+          tableData[action.row + 1][action.cell + 1],
+        );
+      }
+      const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+      tableData[action.row][action.cell] = count;
       return{
         ...state,
         tableData,
