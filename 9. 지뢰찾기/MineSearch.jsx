@@ -1,4 +1,4 @@
-import React, { useReducer, createContext, useMemo  } from 'react';
+import React, { useEffect, useReducer, createContext, useMemo  } from 'react';
 import Table from './Table';
 import Form from './Form';
 
@@ -22,13 +22,13 @@ export const TableContext = createContext({
 
 const initialState = {
   tableData: [],
-  timer: 0,
-  result: '',
   data: {
     row: 0,
     cell: 0,
     mine: 0,
   },
+  timer: 0,
+  result: '',
   halted: true,
   openedCount: 0, //칸을 몇개 열었는지 체크
 };
@@ -68,6 +68,7 @@ export const CLICK_MINE = 'CLICK_MINE';
 export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
+export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 
 const reducer = (state, action) => {
   switch(action.type){
@@ -83,6 +84,7 @@ const reducer = (state, action) => {
         result: '',
         tableData: plantMine(action.row, action.cell, action.mine), //plantMine이라는 함수를 만들어서 지뢰를 심어 테이블 그리기
         halted: false,
+        timer: 0,
       }
     case OPEN_CELL:{
       const tableData = [...state.tableData];
@@ -105,7 +107,7 @@ const reducer = (state, action) => {
         } else {
           checked.push(row + ',' + cell);
         }
-        if(tableData[row][cell] === CODE.NORMAL) {
+        if(tableData[row][cell] === CODE.NORMAL) { // 내 칸이 닫힌 칸이면 카운트 증가
           openedCount += 1; //칸이 하나씩 열릴때마다 openedCount를 1씩 올려준다
         }
         let around = [];
@@ -159,7 +161,7 @@ const reducer = (state, action) => {
       console.log(state.data.row * state.data.cell - state.data.mine, state.openedCount, openedCount)
       if(state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) { //승리
         halted = true; // 승리하면 게임을 멈추고
-        result = '승리하셨습니다!';
+        result = `${state.timer}초만에 승리하셨습니다!`;
       }
       return{
         ...state,
@@ -218,6 +220,12 @@ const reducer = (state, action) => {
         tableData,
       };
     }
+    case INCREMENT_TIMER: {
+      return{
+        ...state,
+        timer: state.timer + 1,
+      }
+    }
     default: 
       return state;
   }
@@ -229,11 +237,23 @@ const MineSearch = () =>{
   
   const value = useMemo(() => ({ tableData: tableData, halted: halted ,dispatch}), [tableData, halted]);
 
+  useEffect(()=>{
+    let timer;
+    if(halted === false){
+      timer = setInterval(() => {
+        dispatch({ type: INCREMENT_TIMER });
+      }, 1000)
+      return () =>{
+        clearInterval(timer);
+      }
+    }
+  }, [halted])
+
   return(
     //value에 값을 그냥 넣어주면 매번 새로운 객체가 생기고 리렌더링된다. 그래서 useMemo로 caching해서 성능최적화한다.
     <TableContext.Provider value={value}>
       <Form />
-      <div>{timer}</div>
+      <div>timer : {timer}</div>
       <Table />
       <div>{result}</div>
     </TableContext.Provider>
