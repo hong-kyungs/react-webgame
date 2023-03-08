@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, memo } from 'react';
 import { CODE, OPEN_CELL, CLICK_MINE, FLAG_CELL, QUESTION_CELL, NORMALIZE_CELL, TableContext } from './MineSearch'; 
 
 const getTdStyle = (code) => {
@@ -49,7 +49,7 @@ const getTdText = (code) => {
   }
 };
 
-const Td = ({rowIndex, cellIndex}) =>{
+const Td = memo(({rowIndex, cellIndex}) =>{
   const { tableData, halted, dispatch } = useContext(TableContext);
 
   const onClickTd = useCallback(() => {
@@ -99,13 +99,32 @@ const Td = ({rowIndex, cellIndex}) =>{
     }
   }, [tableData[rowIndex][cellIndex], halted])
 
+  console.log('td rendered');
+
+  // return useMemo(() => (
+  //   <td 
+  //     style={getTdStyle(tableData[rowIndex][cellIndex])}
+  //     onClick={onClickTd}
+  //     onContextMenu={onRightClickTd}
+  //   >{getTdText(tableData[rowIndex][cellIndex])}</td>
+  // ), [tableData[rowIndex][cellIndex]])
+
+  return < RealTd onClickTd={onClickTd} onRightClickTd={onRightClickTd} data={tableData[rowIndex][cellIndex]} />;
+
+});
+
+//context API 최적화를 위해서
+//1. 리턴부분을 useMemo로 감싸거나,
+//2. 컴포넌트를 따로 분리해서 memo로 감싼다.
+const RealTd = memo(({onClickTd, onRightClickTd, data}) => {
+  console.log('real Td rendered'); // 함수는 100번 호출되서 'td rendered'가 100번 찍히더라고, 실질적으로 렌더링은 1번만 되서 'real Td rendered'가 한번만 찍힌다.
   return(
     <td 
-      style={getTdStyle(tableData[rowIndex][cellIndex])}
-      onClick={onClickTd}
-      onContextMenu={onRightClickTd}
-    >{getTdText(tableData[rowIndex][cellIndex])}</td>
+    style={getTdStyle(data)}
+    onClick={onClickTd}
+    onContextMenu={onRightClickTd}
+    >{getTdText(data)}</td>
   )
-};
+});
 
 export default Td;
