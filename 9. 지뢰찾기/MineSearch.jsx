@@ -24,7 +24,13 @@ const initialState = {
   tableData: [],
   timer: 0,
   result: '',
+  data: {
+    row: 0,
+    cell: 0,
+    mine: 0,
+  },
   halted: true,
+  openedCount: 0, //칸을 몇개 열었는지 체크
 };
 
 const plantMine = (row, cell, mine) => {
@@ -68,6 +74,13 @@ const reducer = (state, action) => {
     case START_GAME:
       return {
         ...state,
+        data: {
+          row: action.row,
+          cell: action.cell,
+          mine: action.mine,
+        },
+        openedCount: 0,
+        result: '',
         tableData: plantMine(action.row, action.cell, action.mine), //plantMine이라는 함수를 만들어서 지뢰를 심어 테이블 그리기
         halted: false,
       }
@@ -78,7 +91,8 @@ const reducer = (state, action) => {
         tableData[i] = [...state.tableData[i]];
       })
 
-      const checked =[];
+      const checked =[]; // 무한반복을 피하기 위해 한번 검사한 칸은 다시 검사하지 않도록 배열을 만들어서 넣어준다.
+      let openedCount = 0; // 
       const checkAround = (row, cell) => { //내 주변 지뢰개수 검사하는 함수
         if([CODE.OPENED, CODE.FLAG, CODE.FLAG_MINE, CODE.QUESTION, CODE.QUESTION_MINE].includes(tableData[row][cell])) { 
           return; // 닫힌칸이 아닌경우 걸러주기, 이미 열리거나, 깃발, 물음표가 있는 칸은 막아주기
@@ -90,6 +104,9 @@ const reducer = (state, action) => {
           return;
         } else {
           checked.push(row + ',' + cell);
+        }
+        if(tableData[row][cell] === CODE.NORMAL) {
+          openedCount += 1; //칸이 하나씩 열릴때마다 openedCount를 1씩 올려준다
         }
         let around = [];
         if(tableData[row - 1]){//클릭한 칸에 윗줄이 있으면 아래처럼 세칸을 넣어준다
@@ -113,7 +130,7 @@ const reducer = (state, action) => {
         const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length; 
         tableData[row][cell] = count;
 
-        if(count === 0) { // 주변칸 오픈
+        if(count === 0) { // 주변칸 오픈 (클릭한 칸이 0이면 주변 8칸을 열고 그 안에 0이 있으면 또 그 0의 주변 8칸을 연다.)
           if(row  > -1){
             const near = [];
             if(row - 1 > -1) { // 윗줄이 있으면
@@ -134,14 +151,22 @@ const reducer = (state, action) => {
               }
             })
           }
-        } else {
-  
         }
       }
       checkAround(action.row, action.cell);
+      let halted = false;
+      let result = '';
+      console.log(state.data.row * state.data.cell - state.data.mine, state.openedCount, openedCount)
+      if(state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) { //승리
+        halted = true; // 승리하면 게임을 멈추고
+        result = '승리하셨습니다!';
+      }
       return{
         ...state,
         tableData,
+        openedCount: state.openedCount + openedCount,
+        halted,
+        result,
       };
     }
     case CLICK_MINE:{
