@@ -2,9 +2,9 @@ const path = require('path');
 const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
-	name: 'number-baseball-setting',
+	name: 'minesearch-setting',
 	mode: 'development', //개발용, 실서비스 : production
-	devtool: 'eval',
+	devtool: 'eval', // 실서비스: hidden-source-map
 	resolve: {
 		extensions: ['.js', '.jsx'],
 	},
@@ -43,6 +43,7 @@ module.exports = {
 		publicPath: '/dist',
 	},
 	devServer: {
+		historyApiFallback: true,
 		devMiddleware: { publicPath: '/dist' },
 		static: { directory: path.resolve(__dirname) },
 		hot: true,
