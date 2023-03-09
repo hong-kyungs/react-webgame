@@ -4,8 +4,9 @@ import RSP from '../6. 가위바위보/RSPClass';
 import Lotto from '../7. 로또추첨기/LottoClass';
 
 class GameMatcher extends Component {
-render() {
-    console.log(this.props);
+  render() {
+    let urlSearchParams = new URLSearchParams(this.props.location.search.slice(1));
+    console.log(urlSearchParams.get('hello'));
     if(this.props.match.params.name === 'number-baseball'){
       return <NumberBaseball />
     } else if(this.props.match.params.name === 'rock-scissors-paper'){
